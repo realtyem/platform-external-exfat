@@ -24,7 +24,7 @@
 
 #if defined(__ANDROID__)
 #define _OFF_T_DEFINED_
-typedef long long off_t;
+//typedef long long off_t;
 #endif
 
 #include <stdio.h>
