@@ -71,7 +71,7 @@ static int fuse_exfat_getattr(const char* path, struct stat* stbuf)
 	return 0;
 }
 
-static int fuse_exfat_truncate(const char* path, off_t size)
+static int fuse_exfat_truncate(const char* path, loff_t size)
 {
 	struct exfat_node* node;
 	int rc;
@@ -95,7 +95,7 @@ static int fuse_exfat_truncate(const char* path, off_t size)
 }
 
 static int fuse_exfat_readdir(const char* path, void* buffer,
-		fuse_fill_dir_t filler, off_t offset, struct fuse_file_info* fi)
+		fuse_fill_dir_t filler, loff_t offset, struct fuse_file_info* fi)
 {
 	struct exfat_node* parent;
 	struct exfat_node* node;
@@ -193,7 +193,7 @@ static int fuse_exfat_fsync(const char* path, int datasync,
 }
 
 static int fuse_exfat_read(const char* path, char* buffer, size_t size,
-		off_t offset, struct fuse_file_info* fi)
+		loff_t offset, struct fuse_file_info* fi)
 {
 	ssize_t ret;
 
@@ -205,7 +205,7 @@ static int fuse_exfat_read(const char* path, char* buffer, size_t size,
 }
 
 static int fuse_exfat_write(const char* path, const char* buffer, size_t size,
-		off_t offset, struct fuse_file_info* fi)
+		loff_t offset, struct fuse_file_info* fi)
 {
 	ssize_t ret;
 
