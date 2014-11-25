@@ -2,11 +2,12 @@
 	main.c (08.11.10)
 	Prints detailed information about exFAT volume.
 
-	Copyright (C) 2011-2013  Andrew Nayenko
+	Free exFAT implementation.
+	Copyright (C) 2011-2014  Andrew Nayenko
 
-	This program is free software: you can redistribute it and/or modify
+	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
+	the Free Software Foundation, either version 2 of the License, or
 	(at your option) any later version.
 
 	This program is distributed in the hope that it will be useful,
@@ -14,8 +15,9 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include <fcntl.h>
@@ -83,13 +85,13 @@ static int dump_sb(const char* spec)
 	if (exfat_read(dev, &sb, sizeof(struct exfat_super_block)) < 0)
 	{
 		exfat_close(dev);
-		exfat_error("failed to read from `%s'", spec);
+		exfat_error("failed to read from '%s'", spec);
 		return 1;
 	}
 	if (memcmp(sb.oem_name, "EXFAT   ", sizeof(sb.oem_name)) != 0)
 	{
 		exfat_close(dev);
-		exfat_error("exFAT file system is not found on `%s'", spec);
+		exfat_error("exFAT file system is not found on '%s'", spec);
 		return 1;
 	}
 
@@ -165,7 +167,7 @@ int main(int argc, char* argv[])
 			used_sectors = true;
 			break;
 		case 'V':
-			puts("Copyright (C) 2011-2013  Andrew Nayenko");
+			puts("Copyright (C) 2011-2014  Andrew Nayenko");
 			return 0;
 		default:
 			usage(argv[0]);

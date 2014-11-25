@@ -2,11 +2,12 @@
 	main.c (02.09.09)
 	exFAT file system checker.
 
-	Copyright (C) 2011-2013  Andrew Nayenko
+	Free exFAT implementation.
+	Copyright (C) 2011-2014  Andrew Nayenko
 
-	This program is free software: you can redistribute it and/or modify
+	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
+	the Free Software Foundation, either version 2 of the License, or
 	(at your option) any later version.
 
 	This program is distributed in the hope that it will be useful,
@@ -14,13 +15,14 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include <exfat.h>
 #include <stdio.h>
 #include <string.h>
+#include <exfat.h>
 #include <exfatfs.h>
 #include <inttypes.h>
 #include <unistd.h>
@@ -43,7 +45,7 @@ static int nodeck(struct exfat* ef, struct exfat_node* node)
 			char name[UTF8_BYTES(EXFAT_NAME_MAX) + 1];
 
 			exfat_get_name(node, name, sizeof(name) - 1);
-			exfat_error("file `%s' has invalid cluster 0x%x", name, c);
+			exfat_error("file '%s' has invalid cluster 0x%x", name, c);
 			rc = 1;
 			break;
 		}
@@ -52,7 +54,7 @@ static int nodeck(struct exfat* ef, struct exfat_node* node)
 			char name[UTF8_BYTES(EXFAT_NAME_MAX) + 1];
 
 			exfat_get_name(node, name, sizeof(name) - 1);
-			exfat_error("cluster 0x%x of file `%s' is not allocated", c, name);
+			exfat_error("cluster 0x%x of file '%s' is not allocated", c, name);
 			rc = 1;
 		}
 		c = exfat_next_cluster(ef, node, c);
@@ -70,16 +72,20 @@ static void dirck(struct exfat* ef, const char* path)
 	char* entry_path;
 
 	if (exfat_lookup(ef, &parent, path) != 0)
-		exfat_bug("directory `%s' is not found", path);
+		exfat_bug("directory '%s' is not found", path);
 	if (!(parent->flags & EXFAT_ATTRIB_DIR))
-		exfat_bug("`%s' is not a directory (0x%x)", path, parent->flags);
+		exfat_bug("'%s' is not a directory (0x%x)", path, parent->flags);
 	if (nodeck(ef, parent) != 0)
+	{
+		exfat_put_node(ef, parent);
 		return;
+	}
 
 	path_length = strlen(path);
 	entry_path = malloc(path_length + 1 + UTF8_BYTES(EXFAT_NAME_MAX) + 1);
 	if (entry_path == NULL)
 	{
+		exfat_put_node(ef, parent);
 		exfat_error("out of memory");
 		return;
 	}
@@ -143,7 +149,7 @@ int main(int argc, char* argv[])
 		switch (opt)
 		{
 		case 'V':
-			puts("Copyright (C) 2011-2013  Andrew Nayenko");
+			puts("Copyright (C) 2011-2014  Andrew Nayenko");
 			return 0;
 		default:
 			usage(argv[0]);
